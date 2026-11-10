@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from '../router/Router';
+import { isBackendConfigured } from '../../services/api';
 import { 
   ShieldCheck, 
   Gem, 
@@ -12,7 +13,8 @@ import {
   UserCheck, 
   Crown, 
   Briefcase, 
-  User 
+  User,
+  Radio
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -212,9 +214,14 @@ export const LoginPage: React.FC = () => {
         <div className="mt-6 pt-4 border-t border-charcoal-800/80 flex items-center justify-between text-[11px] text-slate-500">
           <div className="flex items-center space-x-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Role-Based Permissions</span>
+            <span>Role-Based Access</span>
           </div>
-          <span>Currency: KSh</span>
+          <div className="flex items-center space-x-1.5">
+            <span className={`w-2 h-2 rounded-full ${isBackendConfigured() ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <span className="text-[10px] text-slate-400">
+              {isBackendConfigured() ? 'Render API Linked' : 'PWA Offline Ready'}
+            </span>
+          </div>
         </div>
       </div>
 

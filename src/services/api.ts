@@ -3,7 +3,7 @@
  * Connects frontend to the Django REST Framework backend on Render.
  */
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || '';
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || 'https://acestone-backend.onrender.com';
 
 export const isBackendConfigured = (): boolean => {
   return Boolean(API_BASE && API_BASE.trim().length > 0);
@@ -161,3 +161,4 @@ export const api = {
     return res.json();
   },
 };
+

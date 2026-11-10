@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useStore } from '../../context/StoreContext';
 import { Sidebar } from './Sidebar';
 import { useNavigate, useLocation } from '../router/Router';
 import { GoldRateWidget } from '../common/GoldRateWidget';
@@ -23,6 +24,7 @@ import {
 
 export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser, logout } = useAuth();
+  const { backendConnected } = useStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [goldWidgetOpen, setGoldWidgetOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -159,6 +161,29 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 
           {/* Right Header Info */}
           <div className="flex items-center space-x-1.5 sm:space-x-3">
+            {/* Live Render Backend Connection Status */}
+            <div
+              className={`flex items-center space-x-1.5 px-2 py-1 rounded-xl bg-charcoal-950 border text-[11px] font-medium transition-colors ${
+                backendConnected
+                  ? 'border-emerald-500/30 text-emerald-400'
+                  : 'border-amber-500/30 text-amber-400'
+              }`}
+              title={
+                backendConnected
+                  ? 'Connected to Render PostgreSQL Backend (https://acestone-backend.onrender.com)'
+                  : 'Operating in Local Offline Cache Mode'
+              }
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  backendConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
+                }`}
+              />
+              <span className="hidden md:inline font-mono text-[10px]">
+                {backendConnected ? 'Render DB Live' : 'PWA Cache'}
+              </span>
+            </div>
+
             {/* Live Gold Bullion Rate Ticker Button */}
             <button
               onClick={() => setGoldWidgetOpen(true)}

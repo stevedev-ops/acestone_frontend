@@ -21,6 +21,7 @@ import {
   MOCK_NOTEBOOK_SALES 
 } from '../data/mockData';
 import { generateReceiptNumber } from '../utils/formatters';
+import { api, checkBackendHealth } from '../services/api';
 
 interface StoreContextType {
   products: JewelleryItem[];
@@ -31,6 +32,8 @@ interface StoreContextType {
   approvals: ApprovalRequest[];
   auditLogs: AuditLog[];
   notebookSales: NotebookSaleEntry[];
+  backendConnected: boolean;
+  syncWithBackend: () => Promise<void>;
 
   // Actions
   addProduct: (product: Omit<JewelleryItem, 'id'>, actorName: string, actorRole: UserRole) => JewelleryItem;
@@ -106,6 +109,49 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const saved = localStorage.getItem(STORAGE_PREFIX + 'notebook_sales');
     return saved ? JSON.parse(saved) : MOCK_NOTEBOOK_SALES;
   });
+
+  const [backendConnected, setBackendConnected] = useState<boolean>(false);
+
+  // Synchronize with Render Backend (PostgreSQL)
+  const syncWithBackend = async () => {
+    try {
+      const health = await checkBackendHealth();
+      if (!health.ok) {
+        setBackendConnected(false);
+        return;
+      }
+      setBackendConnected(true);
+
+      // Fetch live notebook sales from Render PostgreSQL
+      const serverNotebook = await api.getNotebookSales();
+      if (Array.isArray(serverNotebook) && serverNotebook.length > 0) {
+        const mappedNotebook: NotebookSaleEntry[] = serverNotebook.map((s: any) => ({
+          id: String(s.id),
+          itemDescription: s.item_description,
+          itemType: s.item_type,
+          amount: Number(s.amount),
+          paymentMethod: s.payment_method,
+          paymentStatus: s.payment_status || 'Completed',
+          recordedBy: s.recorded_by,
+          timestamp: s.created_at || new Date().toISOString(),
+          productId: s.product ? String(s.product) : undefined,
+          productCode: s.product_code || undefined,
+          compartmentCode: s.compartment_code || undefined,
+          customerName: s.customer_name || undefined,
+          notes: s.notes || undefined,
+          reconciled: Boolean(s.reconciled),
+          reconciledWithProductId: s.reconciled_with_product_id || undefined,
+        }));
+        setNotebookSales(mappedNotebook);
+      }
+    } catch (err) {
+      console.warn('Backend sync failed, maintaining local state:', err);
+    }
+  };
+
+  useEffect(() => {
+    syncWithBackend();
+  }, []);
 
   // Persist state changes
   useEffect(() => {
@@ -336,6 +382,29 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     setNotebookSales((prev) => [newEntry, ...prev]);
 
+    // Dispatch to live Render PostgreSQL backend
+    api.createNotebookSale({
+      item_description: entry.itemDescription,
+      item_type: entry.itemType,
+      amount: entry.amount,
+      payment_method: entry.paymentMethod,
+      payment_status: entry.paymentStatus,
+      product_code: entry.productCode,
+      compartment_code: entry.compartmentCode,
+      customer_name: entry.customerName,
+      notes: entry.notes,
+    }).then((created) => {
+      if (created && created.id) {
+        setNotebookSales((current) =>
+          current.map((item) =>
+            item.id === newEntry.id ? { ...item, id: String(created.id) } : item
+          )
+        );
+      }
+    }).catch((err) => {
+      console.warn('Notebook sale saved locally; Render background sync:', err);
+    });
+
     logAudit(
       newEntry.recordedBy,
       'EMPLOYEE',
@@ -367,6 +436,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           : item
       )
     );
+
+    // Persist to live Render PostgreSQL backend
+    const numId = parseInt(entryId.replace(/\D/g, ''), 10);
+    if (!isNaN(numId)) {
+      api.reconcileNotebookSale(numId, productId, notes).catch((err) => {
+        console.warn('Reconciled locally; Render sync error:', err);
+      });
+    }
   };
 
   const deleteNotebookSale = (entryId: string) => {
@@ -566,6 +643,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         addSupplier,
         getProductsInCompartment,
         resetToSampleData,
+        backendConnected,
+        syncWithBackend,
       }}
     >
       {children}

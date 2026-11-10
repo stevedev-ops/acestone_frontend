@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, UserRole } from '../types';
 import { MOCK_USERS } from '../data/mockData';
+import { api, clearAuthTokens } from '../services/api';
+
+const USER_PASSWORDS: Record<string, string> = {
+  'sarah@acestone.co.ke': 'Stone@2026!',
+  'grace@acestone.co.ke': 'Grace@2026!',
+  'david@acestone.co.ke': 'David@2026!',
+  'amina@acestone.co.ke': 'Amina@2026!',
+};
 
 interface AuthContextType {
   currentUser: User | null;
@@ -47,12 +55,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
       setCurrentUser(user);
+
+      // Authenticate with Render backend to acquire JWT tokens for API calls
+      const pwd = USER_PASSWORDS[user.email.toLowerCase()];
+      if (pwd) {
+        api.login(user.email, pwd).catch((err) => {
+          console.warn('Backend JWT acquisition (running with local session):', err);
+        });
+      }
+
       return true;
     }
     return false;
   };
 
   const logout = () => {
+    clearAuthTokens();
     setCurrentUser(null);
   };
 

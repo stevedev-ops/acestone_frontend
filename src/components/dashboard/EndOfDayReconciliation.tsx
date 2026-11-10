@@ -3,6 +3,7 @@ import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { formatKSh } from '../../utils/formatters';
 import { CashDenominationCount, DailyRegisterClosing } from '../../types';
+import { api } from '../../services/api';
 import {
   Calculator,
   ShieldCheck,
@@ -141,6 +142,28 @@ export const EndOfDayReconciliation: React.FC = () => {
 
     setClosedSummary(summary);
     setIsRegisterClosed(true);
+
+    // Persist closing record to Render PostgreSQL Backend
+    api.createRegisterClosing({
+      total_sales: totalSales,
+      total_cash_expected: expectedCash,
+      total_cash_counted: countedCash,
+      cash_difference: cashDifference,
+      total_mpesa_paybill: expectedMpesa,
+      total_card_bank: 0,
+      services_revenue: servicesTotal,
+      total_items_count: notebookSales.length,
+      k1000_count: counts.k1000,
+      k500_count: counts.k500,
+      k200_count: counts.k200,
+      k100_count: counts.k100,
+      k50_count: counts.k50,
+      signed_off_by: currentUser?.name || 'Managing Director',
+      status: cashDifference === 0 ? 'BALANCED' : 'DISCREPANCY',
+      closing_notes: closingNotes,
+    }).catch((err) => {
+      console.warn('Register closed locally; Render PostgreSQL sync:', err);
+    });
   };
 
   return (

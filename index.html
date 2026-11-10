@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    
+    <!-- PWA & Mobile Meta Tags -->
+    <meta name="theme-color" content="#0C0D0F" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Acestone POS" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="application-name" content="Acestone Jewellery POS" />
+    
+    <title>Acestone Jewellery — POS & Inventory Management System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS with Acestone Jewellery Luxury Theme -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              gold: {
+                50: '#fcf9f2',
+                100: '#f7f0df',
+                200: '#eedebb',
+                300: '#e1c68e',
+                400: '#d3ab5f',
+                500: '#c59243', // Primary champagne gold
+                600: '#b07836',
+                700: '#8e5b2c',
+                800: '#754928',
+                900: '#623d24',
+                light: '#f9f5ec',
+                DEFAULT: '#c59243',
+                dark: '#a8752c',
+              },
+              charcoal: {
+                50: '#f6f6f7',
+                100: '#e7e8ea',
+                200: '#cbced3',
+                300: '#a3a7b1',
+                400: '#767b87',
+                500: '#585d68',
+                600: '#444751',
+                700: '#34363d',
+                800: '#212227',
+                850: '#1a1b1f',
+                900: '#141518', // Deep luxury charcoal
+                950: '#0c0d0f',
+              },
+              beige: {
+                50: '#faf8f5',
+                100: '#f4efe6',
+                200: '#e8dfd0',
+                300: '#d9c9b0',
+                400: '#c4ad8e',
+                500: '#b09472',
+              }
+            },
+            fontFamily: {
+              serif: ['Cinzel', 'Playfair Display', 'Georgia', 'serif'],
+              sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+            },
+            boxShadow: {
+              'gold-glow': '0 0 20px -3px rgba(197, 146, 67, 0.3)',
+              'gold-glow-lg': '0 0 35px -5px rgba(197, 146, 67, 0.45)',
+              'premium': '0 12px 35px -10px rgba(0, 0, 0, 0.5)',
+              'inner-gold': 'inset 0 1px 1px 0 rgba(197, 146, 67, 0.3)',
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-charcoal-950 text-slate-100 antialiased selection:bg-gold-500 selection:text-charcoal-950 min-h-screen">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Register Progressive Web App Service Worker
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((reg) => console.log('Acestone PWA Service Worker active:', reg.scope))
+            .catch((err) => console.warn('PWA Service Worker registration:', err));
+        });
+      }
+    </script>
+  </body>
+</html>

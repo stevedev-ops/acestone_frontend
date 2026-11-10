@@ -1,0 +1,60 @@
+{
+  "name": "Acestone Jewellery POS & Vault",
+  "short_name": "Acestone POS",
+  "description": "Tagless Jewellery POS, Inventory Management, and Daily Counter Sales Register for Acestone Jewellery",
+  "start_url": "/#/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0C0D0F",
+  "theme_color": "#C59243",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Daily Sales Pad",
+      "short_name": "Sales Pad",
+      "description": "Record daily counter jewellery and service sales instantly",
+      "url": "/#/sales-pad",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Showcase POS",
+      "short_name": "Showcase POS",
+      "description": "Tray and photo matching checkout",
+      "url": "/#/pos",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Digital Shelf Map",
+      "short_name": "Shelf Map",
+      "description": "View jewellery pieces in display compartments",
+      "url": "/#/shelves",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["business", "finance", "shopping"]
+}
+

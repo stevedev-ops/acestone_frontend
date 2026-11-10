@@ -394,14 +394,31 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                   Multiple photos replace physical labels for side-by-side identification
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={handleAddSamplePhoto}
-                className="px-2.5 py-1.5 rounded-lg bg-charcoal-800 hover:bg-charcoal-700 text-gold-400 text-xs font-semibold flex items-center space-x-1"
-              >
-                <Camera className="w-3.5 h-3.5" />
-                <span>+ Camera / Photo</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileUpload}
+                  id="camera-photo-input"
+                  className="hidden"
+                  multiple
+                />
+                <label
+                  htmlFor="camera-photo-input"
+                  className="px-2.5 py-1.5 rounded-lg bg-gold-500 hover:bg-gold-400 text-charcoal-950 text-xs font-bold flex items-center space-x-1 cursor-pointer shadow-gold-glow transition-all"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>Snap Photo</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={handleAddSamplePhoto}
+                  className="px-2 py-1.5 rounded-lg bg-charcoal-800 hover:bg-charcoal-700 text-slate-400 text-xs font-medium"
+                >
+                  + Sample
+                </button>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-2.5">

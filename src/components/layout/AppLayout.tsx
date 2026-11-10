@@ -24,6 +24,7 @@ import {
 export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [goldWidgetOpen, setGoldWidgetOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
 
